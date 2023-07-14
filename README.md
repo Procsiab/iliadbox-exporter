@@ -1,93 +1,52 @@
-# freebox-exporter
+# Credits: [trazfr/freebox-exporter](https://github.com/trazfr/freebox-exporter)
 
-Prometheus exporter for the [Freebox](https://www.free.fr/freebox/)
+This code is the quickest possible way to adapt the great work from user [trazfr](https://github.com/trazfr) to export Prometheus metrics for an Italian Iliadbox (basically a rebrand of the Freebox) only through API calls over the LAN.
 
-**Disclaimer**: I am not related to Iliad, Free or any of their subsidiaries. I have only created this Prometheus exporter to monitor my own device using some [publicly available documentation](https://dev.freebox.fr/sdk/os/).
+## ⚠️  Warning 🩹
 
-## Install
+To make HTTPS calls over the LAN and reuse as much code as possible, I am actually using the TLS client option `InsecureSkipVerify`, which is relatively **not good**. That being said, you decide if for you it's good enough, or if you know a better solution let me know - even if it's not that "easy" to implement.
 
-### Since Golang 1.16
+# Iliadbox Exporter
 
-Having a working Golang >= 1.16 environment using Go modules:
+This code will realize a Prometheus compatible metrics exporter, which collects data from the Iliadbox router.
 
-```bash
-go install github.com/trazfr/freebox-exporter@latest
-```
+## Build
 
-### Older Golang
-
-This package requires at least Golang 1.13. For Golang 1.13:
+*Optional*: To build using a Golang `1.20` container, run the following commands (assuming Podman is installed):
 
 ```bash
-GO111MODULE=on go get github.com/trazfr/freebox-exporter@latest
-GO111MODULE=on go install github.com/trazfr/freebox-exporter
+podman run --rm -it -v $(pwd):/repo:Z docker.io/amd64/golang:1.20.6-alpine sh
+cd /repo
 ```
 
-## Use
-
-This program is to be run in 2 steps, as you must authorize the exporter to access the Freebox. Once authorized, it may be run from anywhere.
-
-```
-Usage: freebox-exporter [options] <api_token_file>
-
-api_token_file: file to store the token for the API
-
-options:
-  -debug
-        enable the debug mode
-  -hostDetails
-        get details about the hosts connected to wifi and ethernet. This increases the number of metrics
-  -httpDiscovery
-        use http://mafreebox.freebox.fr/api_version to discover the Freebox at the first run (by default: use mDNS)
-  -listen string
-        listen to address (default ":9091")
-```
-
-### Step 1 authorize API
-
-From the Freebox network, generate a token file for the API. The file `token.json` must not exist:
+For building the binary, run `go build` from the repository's folder, or use `get` directly as follows:
 
 ```bash
-$ freebox-exporter token.json
-Could not find the configuration file token.json
-Freebox discovery: mDNS
-1 Please accept the login on the Freebox Server
-...
+go install github.com/Procsiab/iliadbox-exporter@latest
 ```
 
-You must accept the API on the Freebox device.
+## Usage
 
-Once done, the credentials will be stored in the new file `token.json`
+The following options are available:
 
-**In case of errors**:
+- `debug`: More verbose log output
+- `hostDetails`: Collect connected hosts details
+- `httpDiscovery`: Do not rely on mDNS for discovering the Iliadbox's address
+- `listen`: Choose a port to bind to (defaults to 9091)
 
-If you get the message `panic: Access is timeout`, you have to be faster to accept the access on the Freebox.
+After passing the options, it is **mandatory** to pass a path to the JSON file that will store the authentication token.
 
-If you get the message `panic: MDNS timeout`, there may be a firewall preventing you to use mDNS. You may try to get the token using HTTP:
+An example command which willl start the exporter is the following:
 
 ```bash
-$ freebox-exporter -httpDiscovery token.json
-Could not find the configuration file token.json
-Freebox discovery: GET http://mafreebox.freebox.fr/api_version
-1 Please accept the login on the Freebox Server
-...
+iliadbox-exporter -hostDetails -httpDiscovery -listen ":9091" -debug auth_token.json
 ```
 
-### Step 2 run
+### API Authorization
 
-Once you have generated the token you may run from anywhere.
+If it;s the first time adding an app to your Iliadbox, the procedere is briefly reported below:
 
-```bash
-$ freebox-exporter token.json
-Use configuration file token.json
-Listen to :9091
-```
-
-Then you may test it:
-
-```bash
-$ curl 127.0.0.1:9091/metrics
-# HELP freebox_connection_bandwith_bps available upload/download bandwidth in bit/s
-# TYPE freebox_connection_bandwith_bps gauge
-...
-```
+- Run the exporter, which will start a challenge against the Iliadbox
+- Click the right arrow on the Iliadbox to authorize the request (you will also see the application ID on the display)
+- Go to your Iliadbox settings page and under the Access Management, on the Applications tab, edit the permissions for the "iliadbox-exporter" and select at least "Manage settings"
+- Restart the exporter, passing the same path for the token file

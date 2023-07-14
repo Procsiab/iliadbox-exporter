@@ -9,8 +9,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"github.com/trazfr/freebox-exporter/fbx"
-	"github.com/trazfr/freebox-exporter/log"
+	"github.com/Procsiab/iliadbox-exporter/fbx"
+	"github.com/Procsiab/iliadbox-exporter/log"
 )
 
 func usage() {
@@ -28,7 +28,7 @@ func main() {
 	flag.Usage = usage
 	debugPtr := flag.Bool("debug", false, "enable the debug mode")
 	hostDetailsPtr := flag.Bool("hostDetails", false, "get details about the hosts connected to wifi and ethernet. This increases the number of metrics")
-	httpDiscoveryPtr := flag.Bool("httpDiscovery", false, "use http://mafreebox.freebox.fr/api_version to discover the Freebox at the first run (by default: use mDNS)")
+	httpDiscoveryPtr := flag.Bool("httpDiscovery", false, "use https://myiliadbox.iliad.it/api_version to discover the Iliadbox at the first run (by default: use mDNS)")
 	apiVersionPtr := flag.Int("apiVersion", 0, "Force the API version (by default use the latest one)")
 	listenPtr := flag.String("listen", ":9091", "listen to address")
 	flag.Parse()

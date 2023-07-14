@@ -8,8 +8,8 @@ import (
 	"sync"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/trazfr/freebox-exporter/fbx"
-	"github.com/trazfr/freebox-exporter/log"
+	"github.com/Procsiab/iliadbox-exporter/fbx"
+	"github.com/Procsiab/iliadbox-exporter/log"
 )
 
 const (

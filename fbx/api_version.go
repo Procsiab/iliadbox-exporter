@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/mdns"
-	"github.com/trazfr/freebox-exporter/log"
+	"github.com/Procsiab/iliadbox-exporter/log"
 )
 
 type FreeboxAPIVersion struct {
@@ -25,7 +25,7 @@ type FreeboxAPIVersion struct {
 }
 
 const (
-	apiVersionURL = "http://mafreebox.freebox.fr/api_version"
+	apiVersionURL = "https://myiliadbox.iliad.it/api_version"
 	mdnsService   = "_fbx-api._tcp"
 )
 
@@ -52,6 +52,10 @@ func NewFreeboxAPIVersion(client *FreeboxHttpClient, discovery FreeboxDiscovery,
 	if !result.IsValid() {
 		return nil, errors.New("could not get the API version")
 	}
+
+	// Override the remote address and port to still connect over LAN to the Iliadbox
+	result.APIDomain = "myiliadbox.iliad.it"
+	result.HTTPSPort = 443
 	log.Debug.Println("APIVersion", result)
 	return result, nil
 }

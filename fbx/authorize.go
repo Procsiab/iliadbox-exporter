@@ -18,9 +18,9 @@ var (
 			panic(err)
 		}
 		return freeboxAuthorize{
-			AppID:      "com.github.trazfr.fboxexp",
-			AppName:    "prometheus-freebox-exporter",
-			AppVersion: "0.0.1",
+			AppID:      "com.github.Procsiab.ibx",
+			AppName:    "iliadbox-exporter",
+			AppVersion: "0.0.2",
 			DeviceName: hostname,
 		}
 	}()

@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/trazfr/freebox-exporter/log"
+	"github.com/Procsiab/iliadbox-exporter/log"
 )
 
 var (
