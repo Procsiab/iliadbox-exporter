@@ -38,6 +38,10 @@ var (
 		metricPrefix+"system_fan_rpm",
 		"fan rpm",
 		[]string{"id"}, nil)
+	promDescConnectionActivityBytes = prometheus.NewDesc(
+		metricPrefix+"connection_activity_bytes",
+		"current global upload/download activity in bytes/s",
+		[]string{"dir"}, nil) // rx/tx
 	promDescConnectionBandwidthBytes = prometheus.NewDesc(
 		metricPrefix+"connection_bandwidth_bytes",
 		"available upload/download bandwidth in bytes/s",
@@ -247,6 +251,8 @@ func (c *Collector) Collect(ch chan<- prometheus.Metric) {
 			cnxIPv4 = m.IPv4
 			cnxIPv6 = m.IPv6
 
+			c.collectGauge(ch, m.RateUp, promDescConnectionActivityBytes, "tx")
+			c.collectGauge(ch, m.RateDown, promDescConnectionActivityBytes, "rx")
 			c.collectGaugeWithFactor(ch, m.BandwidthUp, 1./8, promDescConnectionBandwidthBytes, "tx")
 			c.collectGaugeWithFactor(ch, m.BandwidthDown, 1./8, promDescConnectionBandwidthBytes, "rx")
 			c.collectCounter(ch, m.BytesUp, promDescConnectionBytes, "tx")
