@@ -158,7 +158,11 @@ var (
 	promDescWifiApStationSignalDbm = prometheus.NewDesc(
 		metricPrefix+"wifi_station_signal_dbm", // written dB in the doc... but I have some doubts
 		"signal attenuation in dBm",
-		[]string{"id"}, nil)
+		[]string{"id", "hostname", "mac"}, nil)
+	promDescWifiApStationInactiveSeconds = prometheus.NewDesc(
+		metricPrefix+"wifi_station_inactive_seconds",
+		"duration in seconds of WiFi inactivity",
+		[]string{"id", "hostname", "ap_band"}, nil)
 
 	promDescLanHostTotal = prometheus.NewDesc(
 		metricPrefix+"lan_host_total",
@@ -443,7 +447,13 @@ func (c *Collector) Collect(ch chan<- prometheus.Metric) {
 							"tx",
 						)
 						c.collectGauge(ch, station.Signal, promDescWifiApStationSignalDbm,
-							stationID)
+							stationID,
+							station.Hostname,
+							mac)
+						c.collectGauge(ch, station.InactiveDuration, promDescWifiApStationInactiveSeconds,
+							stationID,
+							station.Hostname,
+							ap.Config.Band)
 					}
 				}
 			}
