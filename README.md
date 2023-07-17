@@ -36,7 +36,7 @@ The following options are available:
 
 After passing the options, it is **mandatory** to pass a path to the JSON file that will store the authentication token.
 
-An example command which willl start the exporter is the following:
+An example command which will start the exporter is the following:
 
 ```bash
 iliadbox-exporter -hostDetails -httpDiscovery -listen ":9091" -debug auth_token.json
@@ -44,7 +44,7 @@ iliadbox-exporter -hostDetails -httpDiscovery -listen ":9091" -debug auth_token.
 
 ### API Authorization
 
-If it;s the first time adding an app to your Iliadbox, the procedere is briefly reported below:
+If it's the first time adding an app to your Iliadbox, the procedure is briefly reported below:
 
 - Run the exporter, which will start a challenge against the Iliadbox
 - Click the right arrow on the Iliadbox to authorize the request (you will also see the application ID on the display)
