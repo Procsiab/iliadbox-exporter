@@ -74,7 +74,6 @@ func newTLSConfig() *tls.Config {
 		RootCAs: caCertPool,
 		InsecureSkipVerify: true, // Bad duct-taped solution for LAN-only access in HTTPS
 	}
-	tlsConfig.BuildNameToCertificate()
 	return tlsConfig
 }
 
