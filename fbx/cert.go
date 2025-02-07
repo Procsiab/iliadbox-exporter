@@ -3,7 +3,13 @@ package fbx
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"net/http"
+	"time"
 )
+
+type HttpClientInternal interface {
+	Do(req *http.Request) (*http.Response, error)
+}
 
 const (
 	// From the internal documentation available inside the Iliadbox settings panel
@@ -70,4 +76,15 @@ func newTLSConfig() *tls.Config {
 	}
 	tlsConfig.BuildNameToCertificate()
 	return tlsConfig
+}
+
+func httpClient() HttpClientInternal {
+	return &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig:     newTLSConfig(),
+			MaxIdleConnsPerHost: 10,
+			IdleConnTimeout:     10 * time.Minute,
+		},
+		Timeout: 10 * time.Second,
+	}
 }
